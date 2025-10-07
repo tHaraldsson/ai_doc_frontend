@@ -16,14 +16,24 @@ export async function fetchDocuments(): Promise<Document[]> {
     
 
 export async function uploadDocument(formData: FormData): Promise<UploadDocumentResponse> {
-    const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+    const response = await fetch(`${API_BASE_URL}/upload`, {
         method: `POST`,
         body: formData,
     });
     if (!response.ok) {
         throw new Error(`Upload failed`);
     }
-    return response.json();
+
+    try {
+        return await response.json();
+    } catch (error) {
+        const text = await response.text();
+        return {
+            success: true,
+            message: text,
+            document: {} as Document
+        };
+    }
 }
 
 
