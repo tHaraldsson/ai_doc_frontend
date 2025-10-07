@@ -1,0 +1,129 @@
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+}
+
+.home-header {
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.home-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.home-title {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0;
+}
+
+.home-subtitle {
+  color: #6b7280;
+  margin: 0.5rem 0 0 0;
+}
+
+.home-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+}
+
+.home-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.home-hero-title {
+  font-size: 2.25rem;
+  font-weight: bold;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+.home-hero-text {
+  font-size: 1.25rem;
+  color: #6b7280;
+  max-width: 32rem;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.home-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.home-feature-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.home-feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.home-feature-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.5rem 0;
+}
+
+.home-feature-text {
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.home-cta-section {
+  text-align: center;
+}
+
+.home-primary-button {
+  display: inline-block;
+  background-color: #2563eb;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 1.125rem;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: background-color 0.2s;
+}
+
+.home-primary-button:hover {
+  background-color: #1d4ed8;
+}
+
+.home-secondary-link {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.home-link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.home-link:hover {
+  text-decoration: underline;
+}
+
+.home-footer {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #6b7280;
+}
