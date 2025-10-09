@@ -27,15 +27,14 @@ export default function Home() {
         <div className="home-features">
           <div className="home-feature-card">
             <h3 className="home-feature-title">Upload your documents</h3>
-            <p className="home-feature-text">
-              Support for PDF files
-            </p>
+            <p className="home-feature-text">Support for PDF files</p>
           </div>
 
           <div className="home-feature-card">
             <h3 className="home-feature-title">Ask questions</h3>
             <p className="home-feature-text">
-              Ask about specific parts of your documents and get precise answers.
+              Ask about specific parts of your documents and get precise
+              answers.
             </p>
           </div>
 
@@ -52,7 +51,9 @@ export default function Home() {
           <Link to="/upload" className="home-primary-button">
             Upload documents
           </Link>
-
+          <Link to="/chat" className="home-primary-button">
+            Chat with AI
+          </Link>
           <div className="home-secondary-link">
             Or{" "}
             <Link to="/documents" className="home-link">
