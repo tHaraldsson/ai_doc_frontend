@@ -100,6 +100,7 @@
   text-decoration: none;
   margin-bottom: 1rem;
   transition: background-color 0.2s;
+  margin-left: 20px;
 }
 
 .home-primary-button:hover {
