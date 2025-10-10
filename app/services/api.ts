@@ -1,48 +1,64 @@
-import type { Document, UploadDocumentResponse, DocumentListResponse } from "~/types/document";
+import type {
+  Document,
+  UploadDocumentResponse,
+  DocumentListResponse,
+} from "~/types/document";
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = "http://localhost:8080/api";
 
-/*
-export async function fetchDocuments(): Promise<Document[]> {
-    try {
-        const textContent = await fetchTextFromDb();
+export async function uploadDocument(
+  formData: FormData
+): Promise<UploadDocumentResponse> {
+  const response = await fetch(`${API_BASE_URL}/upload`, {
+    method: `POST`,
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error(`Upload failed`);
+  }
 
-        const document: Document = {
-            id: 
-        }
-    }
-}
-    */
-    
+  const result = await response.json();
 
-export async function uploadDocument(formData: FormData): Promise<UploadDocumentResponse> {
-    const response = await fetch(`${API_BASE_URL}/upload`, {
-        method: `POST`,
-        body: formData,
-    });
-    if (!response.ok) {
-        throw new Error(`Upload failed`);
-    }
-
-    try {
-        return await response.json();
-    } catch (error) {
-        const text = await response.text();
-        return {
-            success: true,
-            message: text,
-            document: {} as Document
-        };
-    }
+  return {
+    success: true,
+    document: {
+      id: result.id || String(Date.now()),
+      name: result.filename,
+      uploadDate: new Date().toISOString(),
+    },
+    message: result.message
+  }
 }
 
+export async function getDocuments(): Promise<Document[]> {
+  const response = await fetch(`${API_BASE_URL}/documents`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch documents`);
+  }
+
+const backendDocs = await response.json();
+
+  return backendDocs.map((doc: any) => ({
+    id: String(doc.id),
+    name: doc.fileName,
+    uploadDate: new Date().toISOString(),
+  }));
+}
+
+export async function deleteDocument(id: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/deletedocument/${id}`, {
+    method: `DELETE`,
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to delete document`)
+  }
+}
 
 export async function fetchTextFromDb(): Promise<string> {
-    const response = await fetch(`${API_BASE_URL}/textindb`);
-    if (!response.ok) {
-        throw new Error("Failed to fetch document text");
-    }
-    const text = await response.text();
-    return text;
+  const response = await fetch(`${API_BASE_URL}/textindb`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch document text");
+  }
+  const text = await response.text();
+  return text;
 }
-    
