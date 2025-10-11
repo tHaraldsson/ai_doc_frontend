@@ -2,7 +2,9 @@ import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
 import type { Message } from "~/types/chat"
-import { API_BASE_URL } from '~/services/api';
+// import { API_BASE_URL } from '~/services/api';
+
+const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
 
 export default function Chat() {
   
@@ -106,7 +108,7 @@ export default function Chat() {
             {messages.map((message) => (
               <div key={message.id} className={`message ${message.isUser ? 'user-message' : 'ai-message'}`}>
                 <div className="message-avatar">
-                  {message.isUser ? <img className="user-avatar" src="/public/pictures/user.png" alt="user" /> : <img className="robot-avatar" src="/public/pictures/robot.png" alt="ai assistant" />}
+                  {message.isUser ? <img className="user-avatar" src="/pictures/user.png" alt="user" /> : <img className="robot-avatar" src="/pictures/robot.png" alt="ai assistant" />}
                 </div>
                 <div className="message-content">
                   <div className="message-text">
