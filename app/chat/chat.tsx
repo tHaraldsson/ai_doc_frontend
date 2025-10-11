@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
 import type { Message } from "~/types/chat"
+import { API_BASE_URL } from '~/services/api';
 
 export default function Chat() {
   
@@ -42,7 +43,7 @@ export default function Chat() {
 
     try {
 
-        const response = await fetch(`http://localhost:8080/api/ask?question=${encodeURIComponent(inputText)}`);
+        const response = await fetch(`${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`);
         const answer = await response.text();
 
         const aiMessage: Message = {

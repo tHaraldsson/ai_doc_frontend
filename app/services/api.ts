@@ -4,7 +4,7 @@ import type {
   DocumentListResponse,
 } from "~/types/document";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+export const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 console.log('API_BASE_URL:', import.meta.env.VITE_API_URL, 'Full URL:', API_BASE_URL);
 
 export async function uploadDocument(
