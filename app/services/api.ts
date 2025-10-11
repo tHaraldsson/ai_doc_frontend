@@ -4,7 +4,7 @@ import type {
   DocumentListResponse,
 } from "~/types/document";
 
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 export async function uploadDocument(
   formData: FormData
@@ -26,8 +26,8 @@ export async function uploadDocument(
       name: result.filename,
       uploadDate: new Date().toISOString(),
     },
-    message: result.message
-  }
+    message: result.message,
+  };
 }
 
 export async function getDocuments(): Promise<Document[]> {
@@ -36,7 +36,7 @@ export async function getDocuments(): Promise<Document[]> {
     throw new Error(`Failed to fetch documents`);
   }
 
-const backendDocs = await response.json();
+  const backendDocs = await response.json();
 
   return backendDocs.map((doc: any) => ({
     id: String(doc.id),
@@ -50,7 +50,7 @@ export async function deleteDocument(id: string): Promise<void> {
     method: `DELETE`,
   });
   if (!response.ok) {
-    throw new Error(`Failed to delete document`)
+    throw new Error(`Failed to delete document`);
   }
 }
 
