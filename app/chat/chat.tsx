@@ -1,10 +1,11 @@
 import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
-import type { Message } from "~/types/chat"
+import type { AiResponse, Message } from "~/types/chat"
 // import { API_BASE_URL } from '~/services/api';
 
-const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
+//const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
+const API_BASE_URL = "http://localhost:8080/api"
 
 export default function Chat() {
   
@@ -46,11 +47,16 @@ export default function Chat() {
     try {
 
         const response = await fetch(`${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`);
-        const answer = await response.text();
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const data: AiResponse = await response.json();
 
         const aiMessage: Message = {
             id: (Date.now() + 1).toString(),
-            text: answer,
+            text: data.answer,
             isUser: false,
             timestamp: new Date()
         };

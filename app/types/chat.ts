@@ -4,3 +4,9 @@ export interface Message {
     isUser: boolean;
     timestamp: Date;
 }
+
+export interface AiResponse {
+    answer: string;
+    model: string;
+    tokens: number;
+}
