@@ -7,6 +7,6 @@ export interface Message {
 
 export interface AiResponse {
     answer: string;
-    model: string;
-    tokens: number;
+    model?: string;
+    tokens?: number;
 }

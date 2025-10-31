@@ -1,99 +1,101 @@
 import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
-import type { AiResponse, Message } from "~/types/chat"
+import type { AiResponse, Message } from "~/types/chat";
 // import { API_BASE_URL } from '~/services/api';
 
 //const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
-const API_BASE_URL = "http://localhost:8080/api"
+const API_BASE_URL = "http://localhost:8080/api";
 
 export default function Chat() {
-  
   const [messages, setMessages] = useState<Message[]>([
     {
-        id: "1",
-        text: "Hello! I am your AI-assistant. You can ask me about your uploaded documents. What would you like to know?",
-        isUser: false,
-        timestamp: new Date
-    }
+      id: "1",
+      text: "Hello! I am your AI-assistant. You can ask me about your uploaded documents. What would you like to know?",
+      isUser: false,
+      timestamp: new Date(),
+    },
   ]);
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [documentAvailable, setDocumentsAvailable] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
+
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth"});
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    scrollToBottom(); 
+    scrollToBottom();
   }, [messages]);
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || loading) return;
 
     const userMessage: Message = {
-        id: Date.now().toString(),
-        text: inputText,
-        isUser: true,
-        timestamp: new Date()
+      id: Date.now().toString(),
+      text: inputText,
+      isUser: true,
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputText("");
     setLoading(true);
 
     try {
+      const response = await fetch(
+        `${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`
+      );
 
-        const response = await fetch(`${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const data: AiResponse = await response.json();
+      const data: AiResponse = await response.json();
 
-        const aiMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: data.answer,
-            isUser: false,
-            timestamp: new Date()
-        };
+      const aiText = data.answer || "No answer provided";
 
-        setMessages(prev => [...prev, aiMessage]);
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: aiText,
+        isUser: false,
+        timestamp: new Date(),
+      };
+
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
-        console.error("Error sending message:", error);
-        const errorMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            text: "Error when handling question. Try again later.",
-            isUser: false,
-            timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorMessage]);
+      console.error("Error sending message:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Error when handling question. Try again later.",
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === `Enter`) {
-        e.preventDefault();
-        handleSendMessage();
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
   const clearChat = () => {
-    setMessages([{
+    setMessages([
+      {
         id: "1",
         text: "Hello! I am your AI-assistant. You can ask me about your uploaded documents. What would you like to know?",
         isUser: false,
-        timestamp: new Date()
-    }]);
-
+        timestamp: new Date(),
+      },
+    ]);
   };
-  
-    return (
+
+  return (
     <div className="chat-container">
       <div className="chat-content">
         <div className="chat-header">
@@ -105,35 +107,50 @@ export default function Chat() {
             Clear chat
           </button>
         </div>
-        
-        <div className="chat-card">
-          
 
+        <div className="chat-card">
           {/* chatt meddelanden */}
           <div className="chat-messages">
             {messages.map((message) => (
-              <div key={message.id} className={`message ${message.isUser ? 'user-message' : 'ai-message'}`}>
+              <div
+                key={message.id}
+                className={`message ${message.isUser ? "user-message" : "ai-message"}`}
+              >
                 <div className="message-avatar">
-                  {message.isUser ? <img className="user-avatar" src="/pictures/user.png" alt="user" /> : <img className="robot-avatar" src="/pictures/robot.png" alt="ai assistant" />}
+                  {message.isUser ? (
+                    <img
+                      className="user-avatar"
+                      src="/pictures/user.png"
+                      alt="user"
+                    />
+                  ) : (
+                    <img
+                      className="robot-avatar"
+                      src="/pictures/robot.png"
+                      alt="ai assistant"
+                    />
+                  )}
                 </div>
                 <div className="message-content">
-                  <div className="message-text">
-                    {message.text}
-                  </div>
+                  <div className="message-text">{message.text}</div>
                   <div className="message-time">
-                    {message.timestamp.toLocaleTimeString('sv-SE', { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
+                    {message.timestamp.toLocaleTimeString("sv-SE", {
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </div>
                 </div>
               </div>
             ))}
-            
+
             {loading && (
               <div className="message ai-message">
                 <div className="message-avatar">
-                  <img className="robot-avatar" src="/pictures/robot.png" alt="ai assistant" />
+                  <img
+                    className="robot-avatar"
+                    src="/pictures/robot.png"
+                    alt="ai assistant"
+                  />
                 </div>
                 <div className="message-content">
                   <div className="typing-indicator">
@@ -162,17 +179,15 @@ export default function Chat() {
                 rows={2}
                 disabled={loading}
               />
-              <button 
-                onClick={handleSendMessage} 
+              <button
+                onClick={handleSendMessage}
                 disabled={!inputText.trim() || loading}
                 className="send-button"
               >
                 <span className="send-icon">↑</span>
               </button>
             </div>
-            <div className="input-hint">
-              Press Enter to send
-            </div>
+            <div className="input-hint">Press Enter to send</div>
           </div>
         </div>
       </div>
