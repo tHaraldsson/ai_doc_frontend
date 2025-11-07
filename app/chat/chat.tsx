@@ -1,7 +1,13 @@
 import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
-import type { AiResponse, Message } from "~/types/chat";
+import type {
+  AskQuestionResponse,
+  Message,
+} from "~/types/chat";
+import { askQuestion } from "~/services/api";
+import { useAuth } from "~/context/AuthContext";
+
 // import { API_BASE_URL } from '~/services/api';
 
 //const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
@@ -19,6 +25,8 @@ export default function Chat() {
   const [inputText, setInputText] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const { isAuthenticated } = useAuth();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,6 +51,14 @@ export default function Chat() {
     setLoading(true);
 
     try {
+      const data: AskQuestionResponse = await askQuestion(inputText);
+
+      if (!data.success) {
+        throw new Error(data.error || "Failed to get answer");
+      }
+
+      const aiText = data.answer || "No answer provided";
+
       const response = await fetch(
         `${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`
       );
@@ -50,10 +66,6 @@ export default function Chat() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const data: AiResponse = await response.json();
-
-      const aiText = data.answer || "No answer provided";
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -65,13 +77,26 @@ export default function Chat() {
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      const errorMessage: Message = {
+
+      let errorMessage = "Error when handling question. Try again later";
+
+      if (error instanceof Error) {
+        if (error.message.includes('Authentication failed') || error.message.includes('401')) {
+          errorMessage = "please log in to use the chat feature.";
+        } else if (error.message.includes('Network')) {
+          errorMessage = "Network error. Please check your connection";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      const errorMessageObj: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Error when handling question. Try again later.",
+        text: errorMessage,
         isUser: false,
         timestamp: new Date(),
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessageObj]);
     } finally {
       setLoading(false);
     }
