@@ -54,6 +54,12 @@ export default function Home() {
           <Link to="/chat" className="home-primary-button">
             Chat with AI
           </Link>
+          <Link to="/login" className="home-primary-button">
+            login
+          </Link>
+          <Link to="/register" className="home-primary-button">
+            Register now!
+          </Link>
           <div className="home-secondary-link">
             Or{" "}
             <Link to="/documents" className="home-link">
