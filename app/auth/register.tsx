@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { authAPI } from '../services/api';
-import { useNavigate, Link } from 'react-router';
-import './auth.css';
+import React, { useState } from "react";
+import { authAPI } from "../services/api";
+import { useNavigate, Link } from "react-router";
+import "./auth.css";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
@@ -25,9 +25,10 @@ export default function Register() {
 
     try {
       await authAPI.register(username, password);
-      navigate('/login');
-    } catch (err) {
-      setError('Registration failed. Username might be taken.');
+
+      navigate("/login");
+    } catch (error: any) {
+      setError(error.message);
     } finally {
       setLoading(false);
     }
@@ -70,7 +71,7 @@ export default function Register() {
             />
           </div>
           <button type="submit" disabled={loading}>
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? "Registering..." : "Register"}
           </button>
         </form>
         <p>

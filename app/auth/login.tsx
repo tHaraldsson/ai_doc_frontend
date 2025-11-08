@@ -18,14 +18,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await login(username, password);
-      navigate('/documents');
-    } catch (err) {
-      setError('Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
+     const result = await login(username, password); 
+    if (result.success) {
+      navigate('/'); 
+    } else {
+      setError(result.error || 'Login failed')
     }
-  };
+  } catch (error: any) {
+    setError(error.message);
+  } finally {
+    setLoading(false)
+  }
+};
 
   return (
     <div className="auth-container">

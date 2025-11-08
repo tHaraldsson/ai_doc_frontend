@@ -51,31 +51,19 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const data: AskQuestionResponse = await askQuestion(inputText);
+    const data: AskQuestionResponse = await askQuestion(inputText);
 
-      if (!data.success) {
-        throw new Error(data.error || "Failed to get answer");
-      }
+    console.log("AI Response:", data);
 
-      const aiText = data.answer || "No answer provided";
-
-      const response = await fetch(
-        `${API_BASE_URL}/ask?question=${encodeURIComponent(inputText)}`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        text: aiText,
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
+    const aiMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: data.answer,
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setMessages((prev) => [...prev, aiMessage]);
+    
+  }catch (error) {
       console.error("Error sending message:", error);
 
       let errorMessage = "Error when handling question. Try again later";

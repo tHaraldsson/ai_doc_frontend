@@ -14,56 +14,36 @@ console.log(
   API_BASE_URL
 );
 
-export const getToken = (): string | null => {
-  return localStorage.getItem("jwtToken");
-};
-
-export const setToken = (token: string): void => {
-  localStorage.setItem("jwtToken", token);
-};
-
-export const removeToken = (): void => {
-  localStorage.removeItem("jwtToken");
-};
-
 //authAPI
 export const authAPI = {
+  //login
   login: async (username: string, password: string): Promise<any> => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    const response = await apiRequest(`/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ username, password }),
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Login failed: ${errorText}`);
-    }
 
     const data = await response.json();
-    if (data.token) {
-      setToken(data.token);
-    }
+
     return data;
   },
-
+  //register
   register: async (username: string, password: string): Promise<any> => {
-    console.log(" Register attempt to:", `${API_BASE_URL}/auth/register`);
+    console.log(" Register attempt to:", `/auth/register`);
     console.log(" Register body:", { username, password: "***" });
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await apiRequest(`/auth/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ username, password }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Registration failed: ${errorText}`);
-    }
+    return response.json();
+  },
+
+  //logout
+  logout: async (): Promise<any> => {
+    const response = await apiRequest(`/auth/logout`, {
+      method: "POST",
+    });
 
     return response.json();
   },
@@ -71,7 +51,8 @@ export const authAPI = {
 
 //ApiRequest
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
-  const token = getToken();
+  const url = `${API_BASE_URL}${endpoint}`;
+  console.log(`API Request: ${options.method || 'GET'} ${url}`);
 
   const headers: Record<string, string> = {};
 
@@ -79,36 +60,38 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
     headers["Content-Type"] = "application/json";
   }
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
-
-  const finalHeaders = {
-    ...headers,
-    ...((options.headers as Record<string, string>) || {}),
+  const config: RequestInit = {
+    ...options,
+    headers: {
+      ...headers,
+      ...options.headers,
+    },
+    credentials: "include" as RequestCredentials,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: finalHeaders,
-  });
+  try {
+    const response = await fetch(url, config);
+    console.log(`API Response: ${response.status} ${response.statusText}`);
 
-  if (response.status === 401) {
-    removeToken();
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
+    if (response.status === 401) {
+      console.warn("Authentication failed, redirecting to login");
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      }
+      throw new Error("Authentication failed");
     }
-    throw new Error("Authentication failed");
-  }
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `HTTP error! status: ${response.status}, message: ${errorText}`
-    );
-  }
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API Error ${response.status}:`, errorText);
+      throw new Error(`Request failed: ${response.status} - ${errorText}`);
+    }
 
-  return response;
+    return response;
+  } catch (error) {
+    console.error("API Request failed:", error);
+    throw error;
+  }
 };
 
 //AskQuestion
@@ -121,12 +104,25 @@ export async function askQuestion(
     payload.documentId = documentId;
   }
 
+  console.log("Sending question to backend:", payload);
+
   const response = await apiRequest("/ask", {
     method: "POST",
     body: JSON.stringify(payload),
   });
 
-  const data: AskQuestionResponse = await response.json();
+  const responseText = await response.text();
+  console.log("RAW Response from backend:", responseText);
+
+  let data;
+  try {
+    data = JSON.parse(responseText);
+    console.log("Parsed JSON data:", data);
+  } catch (e) {
+    console.error("JSON Parse Error:", e);
+    throw new Error("Invalid JSON response from server: " + responseText);
+  }
+
   return data;
 }
 
@@ -134,16 +130,10 @@ export async function askQuestion(
 export async function uploadDocument(
   formData: FormData
 ): Promise<UploadDocumentResponse> {
-  const token = getToken();
-
   const headers: Record<string, string> = {};
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
 
-  const response = await fetch(`${API_BASE_URL}/upload`, {
+  const response = await apiRequest(`/upload`, {
     method: `POST`,
-    headers: headers,
     body: formData,
   });
 
@@ -196,27 +186,30 @@ export async function fetchTextFromDb(): Promise<string> {
 }
 
 //isAuthenticated
-export const isAuthenticated = (): boolean => {
-  const token = getToken();
-  if (!token) return false;
-
+export const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const currentTime = Date.now() / 1000;
-    return payload.exp > currentTime;
+    const response = await apiRequest(`/documents`, {
+      method: "GET",
+    });
+    return response.ok;
   } catch (error) {
     return false;
   }
 };
 
 //getCurrentUser
-export const getCurrentUser = (): { username: string } | null => {
-  const token = getToken();
-  if (!token) return null;
-
+export const getCurrentUser = async (): Promise<{ username: string } | null> => {
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return { username: payload.sub };
+    const response = await apiRequest(`/auth/user`, {
+      method: "GET",
+
+    });
+    
+    if (response.ok) {
+      const userData = await response.json();
+      return userData;
+    }
+    return null;
   } catch (error) {
     return null;
   }

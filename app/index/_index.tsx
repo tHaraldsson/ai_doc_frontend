@@ -4,15 +4,6 @@ import "./home.css";
 export default function Home() {
   return (
     <div className="home-container">
-      {/* Header */}
-      <header className="home-header">
-        <div className="home-header-content">
-          <h1 className="home-title">AI Document Assistant</h1>
-          <p className="home-subtitle">
-            Analyze and find information in your documents
-          </p>
-        </div>
-      </header>
 
       {/* Main Content */}
       <main className="home-main">
@@ -53,12 +44,6 @@ export default function Home() {
           </Link>
           <Link to="/chat" className="home-primary-button">
             Chat with AI
-          </Link>
-          <Link to="/login" className="home-primary-button">
-            login
-          </Link>
-          <Link to="/register" className="home-primary-button">
-            Register now!
           </Link>
           <div className="home-secondary-link">
             Or{" "}

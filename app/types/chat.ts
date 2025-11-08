@@ -7,8 +7,8 @@ export interface Message {
 
 export interface AiResponse {
     answer: string;
-    model?: string;
-    tokens?: number;
+    type: string;
+    tokensUsed: number;
 }
 
 export interface AskQuestionRequest {
@@ -17,10 +17,7 @@ export interface AskQuestionRequest {
 }
 
 export interface AskQuestionResponse {
-    success: boolean;
     answer: string;
-    documentId?: string;
-    processingTime?: number;
-    modelUsed?: string;
-    error?: string;
+    model: string;
+    tokens: number
 }
