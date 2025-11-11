@@ -52,7 +52,7 @@ export const authAPI = {
 //ApiRequest
 const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
-  console.log(`API Request: ${options.method || 'GET'} ${url}`);
+  console.log(`API Request: ${options.method || "GET"} ${url}`);
 
   const headers: Record<string, string> = {};
 
@@ -75,9 +75,6 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
 
     if (response.status === 401) {
       console.warn("Authentication failed, redirecting to login");
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
       throw new Error("Authentication failed");
     }
 
@@ -188,7 +185,7 @@ export async function fetchTextFromDb(): Promise<string> {
 //isAuthenticated
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const response = await apiRequest(`/documents`, {
+    const response = await apiRequest(`/auth/user`, {
       method: "GET",
     });
     return response.ok;
@@ -198,13 +195,14 @@ export const isAuthenticated = async (): Promise<boolean> => {
 };
 
 //getCurrentUser
-export const getCurrentUser = async (): Promise<{ username: string } | null> => {
+export const getCurrentUser = async (): Promise<{
+  username: string;
+} | null> => {
   try {
     const response = await apiRequest(`/auth/user`, {
       method: "GET",
-
     });
-    
+
     if (response.ok) {
       const userData = await response.json();
       return userData;
