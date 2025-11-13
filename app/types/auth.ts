@@ -5,6 +5,7 @@ export interface AuthContextType {
   login: (username: string, password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   loading: boolean;
+  error: string | null;
 }
 
 export interface AuthProviderProps {

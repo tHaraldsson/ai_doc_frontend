@@ -30,7 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 let userInfo = null;
       if (authenticated) {
         userInfo = await getCurrentUser();
-        console.log("✅ getCurrentUser result:", userInfo);
+        console.log("getCurrentUser result:", userInfo);
       }
         
         setAuthState({
@@ -48,7 +48,7 @@ let userInfo = null;
         });
     }
   };
-
+  
   useEffect(() => {
     checkAuth();
   }, []);
