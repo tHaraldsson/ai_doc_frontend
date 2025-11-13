@@ -17,23 +17,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: false,
     user: null as string | null,
     loading: true,
+    error: null as string | null,
   });
 
   const checkAuth = async () => {
     try {
-        const authenticated = await isAuthenticated();
-        const userInfo = await getCurrentUser();
+        console.log("Checking authentication...");
 
+        const authenticated = await isAuthenticated();
+        console.log("isAuthenticated result:", authenticated);
+        
+let userInfo = null;
+      if (authenticated) {
+        userInfo = await getCurrentUser();
+        console.log("✅ getCurrentUser result:", userInfo);
+      }
+        
         setAuthState({
             isAuthenticated: authenticated,
             user: authenticated ? userInfo?.username || null : null,
             loading: false,
+            error: null,
         });
     } catch (error) {
         setAuthState({
             isAuthenticated: false,
             user: null,
             loading: false,
+            error: error instanceof Error ? error.message : "Authentication failed",
         });
     }
   };
@@ -45,14 +56,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   //login
   const login = async (username: string, password: string) => {
     try {
+      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      
       const response = await authAPI.login(username, password);
+      console.log("Login API response:", response);
+      
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       await checkAuth();
+      
       return { success: true };
     } catch (error: any) {
+      console.error("Login error:", error);
+      setAuthState(prev => ({
+        ...prev,
+        loading: false,
+        error: error.message
+      }));
       return { success: false, error: error.message };
     }
   };
-
+  
   //logout
   const logout = async () => {
 try {
@@ -64,6 +88,7 @@ try {
         isAuthenticated: false,
         user: null,
         loading: false,
+        error: null,
     });
   }
 };
@@ -74,6 +99,7 @@ try {
     login,
     logout,
     loading: authState.loading,
+    error: authState.error,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -68,7 +68,7 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
     },
     credentials: "include" as RequestCredentials,
   };
-
+  
   try {
     const response = await fetch(url, config);
     console.log(`API Response: ${response.status} ${response.statusText}`);
