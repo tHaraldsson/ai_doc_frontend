@@ -153,7 +153,9 @@ export default function Upload() {
           )}
 
           <div className="uploaded-documents">
-            <h2 className="documents-title">Uploaded Documents ({documents.length})</h2>
+            <h2 className="documents-title">
+              Uploaded Documents ({documents.length})
+            </h2>
 
             {loading ? (
               <p>Loading documents...</p>

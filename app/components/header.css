@@ -1,0 +1,39 @@
+
+.header {
+  background-color: #5f6266;
+  color: white;
+  padding: 1rem;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.header-user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-greeting {
+  font-size: 0.875rem;
+}
+
+.login-link {
+  color: #93c5fd; /* blue-300 */
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: #dbeafe; /* blue-100 */
+  text-decoration: underline;
+}

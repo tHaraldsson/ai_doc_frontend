@@ -7,6 +7,8 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { AuthProvider } from '~/context/AuthContext';
+import { Header } from '~/components/Header';
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -42,7 +44,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+ return (
+    <AuthProvider>
+      <Header />
+      <Outlet />
+    </AuthProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

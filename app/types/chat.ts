@@ -4,3 +4,20 @@ export interface Message {
     isUser: boolean;
     timestamp: Date;
 }
+
+export interface AiResponse {
+    answer: string;
+    type: string;
+    tokensUsed: number;
+}
+
+export interface AskQuestionRequest {
+    question: string;
+    documentId?: string;
+}
+
+export interface AskQuestionResponse {
+    answer: string;
+    model: string;
+    tokens: number
+}
