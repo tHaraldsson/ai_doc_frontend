@@ -10,8 +10,8 @@ import { useAuth } from "~/context/AuthContext";
 
 // import { API_BASE_URL } from '~/services/api';
 
-//const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "https://ai-doc-backend-6faa.onrender.com/api";
+//const API_BASE_URL = "http://localhost:8080/api";
 
 export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
@@ -107,7 +107,7 @@ export default function Chat() {
       },
     ]);
   };
-
+  
   return (
     <div className="chat-container">
       <div className="chat-content">

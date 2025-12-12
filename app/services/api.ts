@@ -24,7 +24,7 @@ export const authAPI = {
     });
 
     const data = await response.json();
-
+    
     return data;
   },
   //register
@@ -139,11 +139,13 @@ export async function uploadDocument(
   }
 
   const result = await response.json();
-
+   
+   console.log("Upload API response:", result);
+  
   return {
     success: true,
     document: {
-      id: result.id || String(Date.now()),
+      id: result.id || 'temporary-id',
       name: result.filename,
       uploadDate: new Date().toISOString(),
     },
