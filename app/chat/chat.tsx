@@ -115,7 +115,7 @@ export default function Chat() {
           <Link to="/" className="chat-back-link">
             Back to Homepage
           </Link>
-          <h1>AI Dokument Assistant</h1>
+          <h1>AI Document Assistant</h1>
           <button onClick={clearChat} className="clear-chat-btn">
             Clear chat
           </button>
