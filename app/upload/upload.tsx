@@ -45,8 +45,12 @@ export default function Upload() {
       setUploadSuccess(false);
       return;
     }
-    
-    if (!confirm(`Are you sure you want to delete ALL ${documents.length} documents? This cannot be undone.`)) {
+
+    if (
+      !confirm(
+        `Are you sure you want to delete ALL ${documents.length} documents? This cannot be undone.`
+      )
+    ) {
       return;
     }
     
@@ -54,44 +58,45 @@ export default function Upload() {
     setDeleteSuccess(null);
     setMessage(`Deleting ${documents.length} documents...`);
     setUploadSuccess(null);
-    
+
     try {
       let deletedCount = 0;
       let failedFiles: string[] = [];
-      
+
       for (const doc of documents) {
         try {
           await deleteDocument(doc.id);
           deletedCount++;
-          
+
           setMessage(`Deleting... ${deletedCount}/${documents.length}`);
         } catch (error) {
           console.error(`Failed to delete ${doc.name}:`, error);
           failedFiles.push(doc.name);
         }
-        
+
         if (deletedCount < documents.length) {
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise((resolve) => setTimeout(resolve, 300));
         }
       }
-      
+
       if (failedFiles.length === 0) {
         setMessage(`✅ Successfully deleted ${deletedCount} documents`);
         setDeleteSuccess(`Deleted ${deletedCount} documents`);
         setUploadSuccess(true);
-        
+
         setTimeout(() => {
           setMessage("");
           setDeleteSuccess(null);
           setUploadSuccess(null);
         }, 3000);
-        
+
         await loadDocuments();
       } else {
-        setMessage(`Deleted ${deletedCount} files, failed: ${failedFiles.length}`);
+        setMessage(
+          `Deleted ${deletedCount} files, failed: ${failedFiles.length}`
+        );
         setUploadSuccess(false);
       }
-      
     } catch (error) {
       console.error("Error deleting all documents:", error);
       setMessage("❌ Failed to delete all documents");
@@ -105,22 +110,21 @@ export default function Upload() {
     if (!confirm(`Are you sure you want to delete "${fileName}"?`)) {
       return;
     }
-    
+
     try {
       await deleteDocument(id);
-      
+
       setMessage(`✅ Document "${fileName}" deleted successfully`);
       setDeleteSuccess(fileName);
       setUploadSuccess(true);
-      
+
       setDocuments(documents.filter((doc) => doc.id !== id));
-      
+
       setTimeout(() => {
         setMessage("");
         setDeleteSuccess(null);
         setUploadSuccess(null);
       }, 3000);
-      
     } catch (error) {
       console.error("Delete error: ", error);
       setMessage(`❌ Failed to delete "${fileName}"`);
@@ -157,7 +161,7 @@ export default function Upload() {
       setMessage(`Found ${fileArray.length} files in folder`);
       setUploadProgress(0);
       setUploadStatus("");
-      setUploadSuccess(null); 
+      setUploadSuccess(null);
     } else {
       setMessage("No supported files found in the selected folder");
       setUploadSuccess(false);
@@ -277,7 +281,7 @@ export default function Upload() {
       if (allFiles.length > 0) {
         setSelectedFiles(allFiles);
         setMessage(`Found ${allFiles.length} files in dropped folder(s)`);
-        setUploadSuccess(null); 
+        setUploadSuccess(null);
       } else {
         setMessage("No supported files found in dropped items");
         setUploadSuccess(false);
@@ -292,62 +296,104 @@ export default function Upload() {
   };
 
   const handleUploadAll = async () => {
-    if (selectedFiles.length === 0) {
-      setMessage("Please select files or folders first");
-      setUploadSuccess(false);
-      return;
-    }
+  if (selectedFiles.length === 0) {
+    setMessage("Please select files or folders first");
+    setUploadSuccess(false);
+    return;
+  }
 
-    setUploading(true);
-    setUploadSuccess(null);
-    setUploadStatus("Preparing upload...");
-    setUploadProgress(0);
+  setUploading(true);
+  setUploadSuccess(null);
+  setUploadStatus("Preparing upload...");
+  setUploadProgress(0);
 
-    const totalFiles = selectedFiles.length;
-    let uploadedCount = 0;
-    let failedFiles: { name: string; error: string }[] = [];
+  const totalFiles = selectedFiles.length;
+  let uploadedCount = 0;
+  let failedFiles: { name: string; error: string }[] = [];
 
-    for (let i = 0; i < selectedFiles.length; i++) {
-      const fileWithPath = selectedFiles[i];
-      const progress = Math.round((i / totalFiles) * 100);
+  console.log("=== START UPLOAD DEBUG ===");
+  console.log("Total files to upload:", totalFiles);
 
-      setUploadProgress(progress);
-      setUploadStatus(
-        `Uploading ${i + 1}/${totalFiles}: ${fileWithPath.filename}`
-      );
+  for (let i = 0; i < selectedFiles.length; i++) {
+    const fileWithPath = selectedFiles[i];
+    const progress = Math.round((i / totalFiles) * 100);
 
-      try {
-        const formData = new FormData();
-        formData.append("file", fileWithPath.file);
+    setUploadProgress(progress);
+    setUploadStatus(
+      `Uploading ${i + 1}/${totalFiles}: ${fileWithPath.filename}`
+    );
 
-        if (i > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-
-        await uploadDocument(formData);
-        uploadedCount++;
-      } catch (error: any) {
-        console.error(`Failed to upload ${fileWithPath.filename}:`, error);
-
-        let errorMessage = "Unknown error";
-        try {
-          if (error.message && error.message.includes("{")) {
-            const errorStart = error.message.indexOf("{");
-            const errorEnd = error.message.lastIndexOf("}") + 1;
-            const errorJson = error.message.substring(errorStart, errorEnd);
-            const errorObj = JSON.parse(errorJson);
-            errorMessage = errorObj.message || errorMessage;
-          }
-        } catch {
-          errorMessage = error.message || "Upload failed";
-        }
-
-        failedFiles.push({
-          name: fileWithPath.relativePath,
-          error: errorMessage,
-        });
+    try {
+      console.log(`\n--- File ${i + 1} ---`);
+      console.log("Filename:", fileWithPath.filename);
+      console.log("File object:", fileWithPath.file);
+      console.log("File size:", fileWithPath.file.size, "bytes");
+      console.log("File type:", fileWithPath.file.type);
+      console.log("File instanceof File:", fileWithPath.file instanceof File);
+      console.log("File instanceof Blob:", fileWithPath.file instanceof Blob);
+      
+      const arrayBuffer = await fileWithPath.file.arrayBuffer();
+      console.log("ArrayBuffer size:", arrayBuffer.byteLength, "bytes");
+      
+      if (arrayBuffer.byteLength === 0) {
+        console.error("ERROR: ArrayBuffer is 0 bytes! File is empty!");
+        throw new Error("File appears to be empty when read");
       }
+
+      const formData = new FormData();
+      formData.append("file", fileWithPath.file, fileWithPath.filename);
+      
+      console.log("FormData created");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, 
+          value instanceof File 
+            ? `${value.name} (${value.size} bytes)` 
+            : value
+        );
+      }
+
+      if (arrayBuffer.byteLength > 0) {
+        const bytes = new Uint8Array(arrayBuffer.slice(0, 20));
+        const hex = Array.from(bytes)
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join(' ');
+        console.log("First 20 bytes (hex):", hex);
+        
+        const ascii = Array.from(bytes)
+          .map(b => b >= 32 && b < 127 ? String.fromCharCode(b) : '.')
+          .join('');
+        console.log("First 20 bytes (ASCII):", ascii);
+      }
+
+      if (i > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+
+      console.log("Sending upload request...");
+      await uploadDocument(formData);
+      console.log("Upload successful!");
+      
+      uploadedCount++;
+      
+    } catch (error: any) {
+      console.error(`FAILED to upload ${fileWithPath.filename}:`, error);
+      
+      let errorMessage = "Unknown error";
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      failedFiles.push({
+        name: fileWithPath.filename,
+        error: errorMessage,
+      });
     }
+  }
+
+  console.log("=== UPLOAD COMPLETE ===");
+  console.log("Uploaded:", uploadedCount, "Failed:", failedFiles.length);
 
     setUploadProgress(100);
 
@@ -503,26 +549,30 @@ export default function Upload() {
           {message && (
             <div
               className={`upload-message ${
-                uploadSuccess === true ? "success" : 
-                uploadSuccess === false ? "error" : 
-                "info"
+                uploadSuccess === true
+                  ? "success"
+                  : uploadSuccess === false
+                    ? "error"
+                    : "info"
               }`}
             >
               {uploadSuccess === true && "✅ "}
               {uploadSuccess === false && "❌ "}
               <div className="message-content">
                 {message}
-                {uploadSuccess === false && selectedFiles.length > 0 && message.toLowerCase().includes("failed") && (
-                  <button
-                    className="retry-button"
-                    onClick={() => {
-                      setMessage("");
-                      handleUploadAll();
-                    }}
-                  >
-                    Retry Failed Files
-                  </button>
-                )}
+                {uploadSuccess === false &&
+                  selectedFiles.length > 0 &&
+                  message.toLowerCase().includes("failed") && (
+                    <button
+                      className="retry-button"
+                      onClick={() => {
+                        setMessage("");
+                        handleUploadAll();
+                      }}
+                    >
+                      Retry Failed Files
+                    </button>
+                  )}
               </div>
             </div>
           )}
@@ -598,7 +648,7 @@ export default function Upload() {
               <h2 className="documents-title">
                 Uploaded Documents ({documents.length})
               </h2>
-              
+
               {documents.length > 0 && (
                 <button
                   className="delete-all-button"
@@ -636,7 +686,7 @@ export default function Upload() {
                       </span>
                     </div>
                     <button
-                      className={`delete-button ${deleteSuccess === doc.name ? 'success' : ''}`}
+                      className={`delete-button ${deleteSuccess === doc.name ? "success" : ""}`}
                       onClick={() => handleDeleteDocument(doc.id, doc.name)}
                       title="Delete document"
                       disabled={deletingAll || uploading}
@@ -648,7 +698,7 @@ export default function Upload() {
               </div>
             )}
           </div>
-          
+
           <div className="upload-info">
             <p>Max file size: 50MB • Files are processed with AI embeddings</p>
           </div>

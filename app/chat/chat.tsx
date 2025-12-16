@@ -1,10 +1,7 @@
 import { Link } from "react-router";
 import "./chat.css";
 import { useState, useEffect, useRef } from "react";
-import type {
-  AskQuestionResponse,
-  Message,
-} from "~/types/chat";
+import type { AskQuestionResponse, Message } from "~/types/chat";
 import { askQuestion } from "~/services/api";
 import { useAuth } from "~/context/AuthContext";
 
@@ -27,11 +24,11 @@ export default function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { isAuthenticated } = useAuth();
-
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
+  
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -51,27 +48,29 @@ export default function Chat() {
     setLoading(true);
 
     try {
-    const data: AskQuestionResponse = await askQuestion(inputText);
+      const data: AskQuestionResponse = await askQuestion(inputText);
 
-    console.log("AI Response:", data);
+      console.log("AI Response:", data);
 
-    const aiMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: data.answer,
-      isUser: false,
-      timestamp: new Date(),
-    };
-    setMessages((prev) => [...prev, aiMessage]);
-    
-  }catch (error) {
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
       console.error("Error sending message:", error);
 
       let errorMessage = "Error when handling question. Try again later";
 
       if (error instanceof Error) {
-        if (error.message.includes('Authentication failed') || error.message.includes('401')) {
+        if (
+          error.message.includes("Authentication failed") ||
+          error.message.includes("401")
+        ) {
           errorMessage = "please log in to use the chat feature.";
-        } else if (error.message.includes('Network')) {
+        } else if (error.message.includes("Network")) {
           errorMessage = "Network error. Please check your connection";
         } else {
           errorMessage = error.message;
@@ -107,7 +106,7 @@ export default function Chat() {
       },
     ]);
   };
-  
+
   return (
     <div className="chat-container">
       <div className="chat-content">
