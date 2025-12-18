@@ -1,6 +1,6 @@
 import Upload from "~/upload/upload";
 import type { Route } from "../+types/root";
-
+import ProtectedRoute from "~/components/ProtectedRoute";
 
 
 
@@ -12,5 +12,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function UploadPage() {
-  return <Upload />;
+  return (
+    <ProtectedRoute>
+      <Upload />
+    </ProtectedRoute>
+  );
 }

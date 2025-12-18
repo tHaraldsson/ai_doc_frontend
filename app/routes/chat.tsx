@@ -1,6 +1,6 @@
 import Chat from "~/chat/chat";
 import type { Route } from "../+types/root";
-
+import ProtectedRoute from "~/components/ProtectedRoute";
 
 
 
@@ -12,5 +12,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function ChatPage() {
-  return <Chat />;
+  return (
+    <ProtectedRoute>
+      <Chat />
+    </ProtectedRoute>
+  );
 }

@@ -1,6 +1,6 @@
 import Documents from "~/documents/documents";
 import type { Route } from "../+types/root";
-
+import ProtectedRoute from "~/components/ProtectedRoute";
 
 
 
@@ -12,5 +12,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function DocumentsPage() {
-  return <Documents />;
+  return (
+    <ProtectedRoute>
+      <Documents />
+    </ProtectedRoute>
+  );
 }
