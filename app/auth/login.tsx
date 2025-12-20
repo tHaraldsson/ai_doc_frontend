@@ -1,4 +1,3 @@
-// app/auth/login.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '~/context/AuthContext';
 import { useNavigate, Link, useLocation } from "react-router";
@@ -9,7 +8,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showRedirectMessage, setShowRedirectMessage] = useState(false);
   
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -17,44 +15,36 @@ export default function Login() {
 
   const state = location.state as any;
   const from = state?.from || '/';
-  const message = state?.message;
+  const message = state?.message || '';
+  
+  console.log("Login page - state:", { from, message, isAuthenticated });
 
-  console.log("Login page state:", { from, message, isAuthenticated });
-
+  const hasRedirected = React.useRef(false);
+  
   useEffect(() => {
-    console.log("Login useEffect running");
-    
-    if (isAuthenticated) {
+    if (isAuthenticated && !hasRedirected.current) {
+      hasRedirected.current = true;
       console.log("Already authenticated, redirecting to:", from);
       navigate(from, { replace: true });
-      return;
     }
-    
-    if (message) {
-      console.log("Showing redirect message:", message);
-      setShowRedirectMessage(true);
-      if (window.history.replaceState) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    }
-  }, [isAuthenticated, navigate, from, message]);
-
+  }, [isAuthenticated, navigate, from]);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    hasRedirected.current = false;
 
     try {
       const result = await login(username, password); 
       if (result.success) {
-        console.log("Login successful, redirecting to:", from);
-        navigate(from, { replace: true });
+        console.log("Login successful, will redirect...");
       } else {
         setError(result.error || 'Login failed');
+        setLoading(false);
       }
     } catch (error: any) {
       setError(error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -64,12 +54,11 @@ export default function Login() {
       <div className="auth-form">
         <h2>Login</h2>
         
-        {showRedirectMessage && message && (
-          <div className="redirect-message">
-            <div className="message-content">
-              <p>{message}</p>
-              <small>Log in to continue to {from !== '/' ? from : 'homepage'}</small>
-            </div>
+        {/* Visa meddelande från ProtectedRoute */}
+        {message && (
+          <div className="info-message">
+            <p>{message}</p>
+            <small>Log in to access {from !== '/' ? from : 'the protected page'}</small>
           </div>
         )}
         

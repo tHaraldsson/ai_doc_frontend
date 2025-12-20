@@ -21,10 +21,10 @@ export default function Documents() {
         setLoading(false);
       }
     }
-
+    
     loadText();
   }, []);
-
+  
   if (loading) {
     return (
       <div className="documents-container">

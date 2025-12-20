@@ -78,7 +78,7 @@ export default function Upload() {
           await new Promise((resolve) => setTimeout(resolve, 300));
         }
       }
-
+      
       if (failedFiles.length === 0) {
         setMessage(`✅ Successfully deleted ${deletedCount} documents`);
         setDeleteSuccess(`Deleted ${deletedCount} documents`);
@@ -698,9 +698,9 @@ export default function Upload() {
               </div>
             )}
           </div>
-
+          
           <div className="upload-info">
-            <p>Max file size: 50MB • Files are processed with AI embeddings</p>
+            <p>Max file size: 10MB • Files are processed with AI embeddings</p>
           </div>
         </div>
       </div>

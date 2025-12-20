@@ -135,6 +135,34 @@ button:hover:not(:disabled) {
   color: #333;
 }
 
+.info-message {
+  background-color: #e8f4fd;
+  border: 1px solid #b6d4fe;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #084298;
+}
+
+.info-message p {
+  margin: 0 0 5px 0;
+  font-weight: 500;
+}
+
+.info-message small {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c2c7;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #842029;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
