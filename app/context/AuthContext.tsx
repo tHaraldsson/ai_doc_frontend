@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { authAPI, getCurrentUser, isAuthenticated } from "../services/api";
 import type { AuthContextType, AuthProviderProps } from "~/types/auth";
 
@@ -19,55 +19,64 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading: true,
     error: null as string | null,
   });
-
-  const checkAuth = async () => {
-    try {
-        console.log("Checking authentication...");
-
-        const authenticated = await isAuthenticated();
-        console.log("isAuthenticated result:", authenticated);
-        
-let userInfo = null;
-      if (authenticated) {
-        userInfo = await getCurrentUser();
-        console.log("getCurrentUser result:", userInfo);
-      }
-        
-        setAuthState({
-            isAuthenticated: authenticated,
-            user: authenticated ? userInfo?.username || null : null,
-            loading: false,
-            error: null,
-        });
-    } catch (error) {
-        setAuthState({
-            isAuthenticated: false,
-            user: null,
-            loading: false,
-            error: error instanceof Error ? error.message : "Authentication failed",
-        });
-    }
-  };
   
+  // Auth check
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        console.log("AuthProvider: Checking authentication...");
+        const authenticated = await isAuthenticated();
+        console.log("AuthProvider: isAuthenticated result:", authenticated);
+        
+        let userInfo = null;
+        if (authenticated) {
+          userInfo = await getCurrentUser();
+          console.log("AuthProvider: getCurrentUser result:", userInfo);
+        }
+          
+        setAuthState({
+          isAuthenticated: authenticated,
+          user: authenticated ? userInfo?.username || null : null,
+          loading: false,
+          error: null,
+        });
+        
+      } catch (error) {
+        console.error("AuthProvider: Auth check error:", error);
+        
+        const hasJwtCookie = document.cookie.includes('jwt=');
+        const isLikelyAuthenticated = hasJwtCookie;
+        
+        setAuthState({
+          isAuthenticated: false, 
+          user: null,
+          loading: false,
+          error: null,
+        });
+      }
+    };
+    
     checkAuth();
   }, []);
 
-  //login
-  const login = async (username: string, password: string) => {
+  // Login
+  const login = useCallback(async (username: string, password: string) => {
     try {
       setAuthState(prev => ({ ...prev, loading: true, error: null }));
       
       const response = await authAPI.login(username, password);
-      console.log("Login API response:", response);
+      console.log("AuthProvider: Login API response:", response);
       
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      await checkAuth();
+      setAuthState({
+        isAuthenticated: true,
+        user: username,
+        loading: false,
+        error: null,
+      });
       
       return { success: true };
     } catch (error: any) {
-      console.error("Login error:", error);
+      console.error("AuthProvider: Login error:", error);
       setAuthState(prev => ({
         ...prev,
         loading: false,
@@ -75,32 +84,41 @@ let userInfo = null;
       }));
       return { success: false, error: error.message };
     }
-  };
+  }, []);
   
-  //logout
-  const logout = async () => {
-try {
-    await authAPI.logout();
-  } catch (error) {
-    console.error("Logout error:", error);
-  } finally {
-    setAuthState({
+  // Logout
+  const logout = useCallback(async () => {
+    try {
+      await authAPI.logout();
+    } catch (error) {
+      console.error("AuthProvider: Logout error:", error);
+    } finally {
+      setAuthState({
         isAuthenticated: false,
         user: null,
         loading: false,
         error: null,
-    });
-  }
-};
-
-  const value: AuthContextType = {
+      });
+    }
+  }, []);
+  
+  const value = useMemo(() => ({
     isAuthenticated: authState.isAuthenticated,
     user: authState.user,
     login,
     logout,
     loading: authState.loading,
     error: authState.error,
-  };
+  }), [
+    authState.isAuthenticated, 
+    authState.user, 
+    authState.loading, 
+    authState.error,
+    login,
+    logout,
+  ]);
+
+  console.log("AuthProvider: Rendering with state:", authState);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

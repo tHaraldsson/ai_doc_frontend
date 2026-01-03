@@ -77,7 +77,7 @@ const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
       console.warn("Authentication failed, redirecting to login");
       throw new Error("Authentication failed");
     }
-
+    
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`API Error ${response.status}:`, errorText);
@@ -187,12 +187,29 @@ export async function fetchTextFromDb(): Promise<string> {
 //isAuthenticated
 export const isAuthenticated = async (): Promise<boolean> => {
   try {
-    const response = await apiRequest(`/auth/user`, {
+    const hasJwtCookie = document.cookie.includes('jwt=');
+    if (!hasJwtCookie) {
+      console.log("No JWT cookie found, skipping API call");
+      return false;
+    }
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch(`${API_BASE_URL}/auth/user`, {
       method: "GET",
+      credentials: "include",
+      signal: controller.signal,
     });
+    
+    clearTimeout(timeoutId);
     return response.ok;
+    
   } catch (error) {
-    return false;
+    console.log("Auth check failed:", error);
+    
+    const hasJwtCookie = document.cookie.includes('jwt=');
+    return hasJwtCookie;
   }
 };
 
