@@ -1,87 +1,121 @@
-# Welcome to React Router!
+# AI Document Frontend
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
-
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
-
-## Getting Started
-
-### Installation
-
-Install the dependencies:
-
-```bash
-npm install
-```
-
-### Development
-
-Start the development server with HMR:
-
-```bash
-npm run dev
-```
-
-Your application will be available at `http://localhost:5173`.
-
-## Building for Production
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-## Deployment
-
-### Docker Deployment
-
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+This repository contains the frontend for an AI-powered document question-answering application.  
+The frontend is built with **React** and **Vite**, providing a responsive, secure, and user-friendly interface for interacting with documents and the AI backend.
 
 ---
 
-Built with ❤️ using React Router.
+## Features
+
+- User authentication (login and registration)
+- Protected routes for authenticated users
+- Upload documents (PDF, Excel, PowerPoint)
+- View user documents
+- Chat interface to ask questions about uploaded documents
+- Responsive design with CSS modules
+- Context-based authentication state management
+- Integration with backend API
+
+---
+
+## Tech Stack
+
+- React 18 + Vite
+- TypeScript
+- React Router v6
+- Context API for state management
+- Fetch API for backend communication
+- CSS modules for styling
+- Docker support for containerized deployment
+
+---
+
+## Project Structure
+
+```text
+app/
+├─ auth/        # Authentication pages (Login, Register)
+├─ chat/        # Chat interface
+├─ components/  # Reusable components (Header, LogoutButton, ProtectedRoute)
+├─ context/     # AuthContext for managing user authentication
+├─ documents/   # Documents page
+├─ index/       # Homepage and general styles
+├─ routes/      # Route definitions for navigation
+├─ services/    # API service for backend communication
+├─ types/       # TypeScript type definitions
+└─ upload/      # Upload page and related styles
+
+```
+Pages and Routes
+Authentication
+/login – Login page
+
+/register – User registration page
+
+Documents
+/documents – List of uploaded documents
+
+/upload – Upload new documents
+
+Chat
+/chat – Chat interface to ask questions about documents
+
+API Integration
+The frontend communicates with the backend via app/services/api.ts.
+
+It handles:
+
+Authentication (login, registration, logout)
+
+Uploading and retrieving documents
+
+Asking questions to the AI
+
+JWT management using HttpOnly cookies
+
+All requests to protected endpoints require authentication.
+
+Styling
+CSS modules are used for scoped styling
+
+Responsive design ensures usability on desktop and mobile
+
+Common UI elements like header and logout button are reused across pages
+
+Environment Variables
+Create a .env file or configure environment variables depending on your deployment:
+
+env
+VITE_API_BASE_URL=https://your-backend-url.com/api
+
+Running the Project
+Development
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+The frontend will be available at http://localhost:5173 by default.
+
+Production Build
+
+npm run build
+npm run preview
+
+Docker
+You can build and run the frontend using Docker:
+
+
+docker build -t ai-doc-frontend .
+docker run -p 5173:5173 ai-doc-frontend
+
+
+Author
+Tommy Haraldsson
+Java Developer (Student)
+Degree Thesis Project
+
+
+
+---
