@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const isLikelyAuthenticated = hasJwtCookie;
         
         setAuthState({
-          isAuthenticated: isLikelyAuthenticated, 
+          isAuthenticated: false, 
           user: null,
           loading: false,
           error: null,
