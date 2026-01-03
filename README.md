@@ -32,6 +32,7 @@ The frontend is built with **React** and **Vite**, providing a responsive, secur
 
 ## Project Structure
 
+``` text
 app/
 ├─ auth/ # Authentication pages (Login, Register)
 ├─ chat/ # Chat interface
@@ -43,9 +44,8 @@ app/
 ├─ services/ # API service for backend communication
 ├─ types/ # TypeScript type definitions
 └─ upload/ # Upload page and related styles
+```
 
-yaml
-Kopiera kod
 
 ---
 
@@ -73,10 +73,10 @@ The frontend communicates with the backend via `app/services/api.ts`.
 
 It handles:
 
-- Authentication (login, registration, logout)
-- Uploading and retrieving documents
-- Asking questions to the AI
-- JWT management using HttpOnly cookies
+- Authentication (login, registration, logout)  
+- Uploading and retrieving documents  
+- Asking questions to the AI  
+- JWT management using HttpOnly cookies  
 
 > All requests to protected endpoints require authentication.
 
@@ -84,9 +84,9 @@ It handles:
 
 ## Styling
 
-- CSS modules are used for scoped styling
-- Responsive design ensures usability on desktop and mobile
-- Common UI elements like header and logout button are reused across pages
+- CSS modules are used for scoped styling  
+- Responsive design ensures usability on desktop and mobile  
+- Common UI elements like header and logout button are reused across pages  
 
 ---
 
@@ -94,12 +94,17 @@ It handles:
 
 Create a `.env` file or configure environment variables depending on your deployment:
 
-```env
 VITE_API_BASE_URL=https://your-backend-url.com/api
-Running the Project
-Development
-bash
-Kopiera kod
+
+
+
+---
+
+## Running the Project
+
+### Development
+
+```bash
 # Install dependencies
 npm install
 
@@ -108,15 +113,14 @@ npm run dev
 The frontend will be available at http://localhost:5173 by default.
 
 Production Build
-bash
-Kopiera kod
+
 npm run build
 npm run preview
 Docker
-bash
-Kopiera kod
+
 docker build -t ai-doc-frontend .
 docker run -p 5173:5173 ai-doc-frontend
+```
 Author
 Tommy Haraldsson
 Java Developer (Student)
