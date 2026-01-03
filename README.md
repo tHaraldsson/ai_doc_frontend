@@ -32,65 +32,74 @@ The frontend is built with **React** and **Vite**, providing a responsive, secur
 
 ## Project Structure
 
-```text
 app/
-├─ auth/        # Authentication pages (Login, Register)
-├─ chat/        # Chat interface
-├─ components/  # Reusable components (Header, LogoutButton, ProtectedRoute)
-├─ context/     # AuthContext for managing user authentication
-├─ documents/   # Documents page
-├─ index/       # Homepage and general styles
-├─ routes/      # Route definitions for navigation
-├─ services/    # API service for backend communication
-├─ types/       # TypeScript type definitions
-└─ upload/      # Upload page and related styles
+├─ auth/ # Authentication pages (Login, Register)
+├─ chat/ # Chat interface
+├─ components/ # Reusable components (Header, LogoutButton, ProtectedRoute)
+├─ context/ # AuthContext for managing user authentication
+├─ documents/ # Documents page
+├─ index/ # Homepage and general styles
+├─ routes/ # Route definitions for navigation
+├─ services/ # API service for backend communication
+├─ types/ # TypeScript type definitions
+└─ upload/ # Upload page and related styles
 
-```
-Pages and Routes
-Authentication
-/login – Login page
+yaml
+Kopiera kod
 
-/register – User registration page
+---
 
-Documents
-/documents – List of uploaded documents
+## Pages and Routes
 
-/upload – Upload new documents
+### Authentication
 
-Chat
-/chat – Chat interface to ask questions about documents
+- `/login` – Login page  
+- `/register` – User registration page
 
-API Integration
-The frontend communicates with the backend via app/services/api.ts.
+### Documents
+
+- `/documents` – List of uploaded documents  
+- `/upload` – Upload new documents
+
+### Chat
+
+- `/chat` – Chat interface to ask questions about documents
+
+---
+
+## API Integration
+
+The frontend communicates with the backend via `app/services/api.ts`.  
 
 It handles:
 
-Authentication (login, registration, logout)
+- Authentication (login, registration, logout)
+- Uploading and retrieving documents
+- Asking questions to the AI
+- JWT management using HttpOnly cookies
 
-Uploading and retrieving documents
+> All requests to protected endpoints require authentication.
 
-Asking questions to the AI
+---
 
-JWT management using HttpOnly cookies
+## Styling
 
-All requests to protected endpoints require authentication.
+- CSS modules are used for scoped styling
+- Responsive design ensures usability on desktop and mobile
+- Common UI elements like header and logout button are reused across pages
 
-Styling
-CSS modules are used for scoped styling
+---
 
-Responsive design ensures usability on desktop and mobile
+## Environment Variables
 
-Common UI elements like header and logout button are reused across pages
+Create a `.env` file or configure environment variables depending on your deployment:
 
-Environment Variables
-Create a .env file or configure environment variables depending on your deployment:
-
-env
+```env
 VITE_API_BASE_URL=https://your-backend-url.com/api
-
 Running the Project
 Development
-
+bash
+Kopiera kod
 # Install dependencies
 npm install
 
@@ -99,23 +108,16 @@ npm run dev
 The frontend will be available at http://localhost:5173 by default.
 
 Production Build
-
+bash
+Kopiera kod
 npm run build
 npm run preview
-
 Docker
-You can build and run the frontend using Docker:
-
-
+bash
+Kopiera kod
 docker build -t ai-doc-frontend .
 docker run -p 5173:5173 ai-doc-frontend
-
-
 Author
 Tommy Haraldsson
 Java Developer (Student)
 Degree Thesis Project
-
-
-
----
