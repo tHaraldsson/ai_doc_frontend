@@ -28,13 +28,6 @@ export default function Home() {
               answers.
             </p>
           </div>
-          
-          <div className="home-feature-card">
-            <h3 className="home-feature-title">Conversation</h3>
-            <p className="home-feature-text">
-              Have dialogues about your documents.
-            </p>
-          </div>
         </div>
 
         {/* cta Buttons */}
